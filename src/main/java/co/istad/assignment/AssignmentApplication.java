@@ -3,13 +3,14 @@ package co.istad.assignment;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 import java.sql.SQLOutput;
 import java.util.Optional;
 import java.util.Scanner;
 
 @SpringBootApplication
-public class AssignmentApplication implements CommandLineRunner {
+public class AssignmentApplication{
 
     public static void main(String[] args) {
         SpringApplication.run(AssignmentApplication.class, args);
@@ -21,111 +22,121 @@ public class AssignmentApplication implements CommandLineRunner {
         this.studentService = studentService;
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        Scanner scanner = new Scanner(System.in);
-        int opt = 0;
 
-        while (true) {
-            System.out.println("""
+    @Bean
+    public CommandLineRunner run(StudentService studentService) {
+        return (args) -> {
+            Scanner scanner = new Scanner(System.in);
+            int opt = 0;
+
+            while (true) {
+                System.out.println("""
                     ======================
                     Student Manage Student 
                     ======================
+                    1. Inset new student
+                    2. Select All Students
+                    3. Select Student By ID
+                    4. Update Student By ID
+                    5. Delete Student By ID
                     """);
-            System.out.print("[+] Insert Option: ");
-            opt = scanner.nextInt();
+                System.out.print("[+] Insert Option: ");
+                opt = scanner.nextInt();
+                scanner.nextLine();
 
-            switch (opt) {
-                case 1 -> {
-                    System.out.println("""
+                switch (opt) {
+                    case 1 -> {
+                        System.out.println("""
                             ===== Insert New Student ====
                             """);
-                    System.out.print("[+] Insert Id: ");
-                    Integer id = scanner.nextInt();
-                    System.out.print("[+] Insert FullName: ");
-                    String name = scanner.next();
-                    System.out.print("[+] Insert Gender: ");
-                    String gender = scanner.next();
-                    System.out.print("[+] Insert Score: ");
-                    Double score = scanner.nextDouble();
-
-                    Student newStudent = Student.builder()
-                            .id(id)
-                            .fullName(name)
-                            .gender(gender)
-                            .score(score)
-                            .build();
-                    studentService.insertStudent(newStudent);
-                    System.out.println("Student Inserted Successfully!");
-                }
-                case 2 -> {
-                    System.out.println("""
-                            ===== Select All Student =====
-                            """);
-                    studentService.selectAllStudents()
-                            .forEach(student -> {
-                                System.out.println("Student Id: " + student.getId());
-                                System.out.println("Student FullName: " + student.getFullName());
-                                System.out.println("Student Gender: " + student.getGender());
-                                System.out.println("Student Score: " + student.getScore());
-                                System.out.println("=========================================");
-                            });
-                }
-                case 3 -> {
-                    System.out.println("""
-                            ===== Select Student By Id =====
-                            """);
-                    System.out.print("[+] Insert Id Student : ");
-                    Integer id = scanner.nextInt();
-                    Student student = studentService.selectStudentById(id);
-                    if (student != null) {
-                        System.out.println("Student Id: " + student.getId());
-                        System.out.println("Student FullName: " + student.getFullName());
-                        System.out.println("Student Gender: " + student.getGender());
-                        System.out.println("Student Score: " + student.getScore());
-                    } else {
-                        System.out.println("Student Not Found!");
-                    }
-                }
-                case 4 -> {
-                    System.out.println("""
-                            ===== Update Student By Id =====
-                            """);
-                    System.out.print("[+] Insert Id Student : ");
-                    Integer id = scanner.nextInt();
-                    Student student = studentService.selectStudentById(id);
-                    if (student != null) {
-                        System.out.print("[+] Update FullName Student : ");
-                        String fullName = scanner.next();
-                        System.out.print("[+] Update Gender Student : ");
+                        System.out.print("[+] Insert Id: ");
+                        Integer id = scanner.nextInt();
+                        System.out.print("[+] Insert FullName: ");
+                        String name = scanner.next();
+                        System.out.print("[+] Insert Gender: ");
                         String gender = scanner.next();
-                        System.out.print("[+] Update Score Student : ");
+                        System.out.print("[+] Insert Score: ");
                         Double score = scanner.nextDouble();
 
-                        Student updateStudent = Student.builder()
-                                .fullName(fullName)
+                        Student newStudent = Student.builder()
+                                .id(id)
+                                .fullName(name)
                                 .gender(gender)
                                 .score(score)
                                 .build();
-                        studentService.updateStudent(id, updateStudent);
-                        System.out.println("Student Updated Successfully!");
+                        studentService.insertStudent(newStudent);
+                        System.out.println("Student Inserted Successfully!");
                     }
-                }
-                case 5 -> {
-                    System.out.println("""
+                    case 2 -> {
+                        System.out.println("""
+                            ===== Select All Student =====
+                            """);
+                        studentService.selectAllStudents()
+                                .forEach(student -> {
+                                    System.out.println("Student Id: " + student.getId());
+                                    System.out.println("Student FullName: " + student.getFullName());
+                                    System.out.println("Student Gender: " + student.getGender());
+                                    System.out.println("Student Score: " + student.getScore());
+                                    System.out.println("=========================================");
+                                });
+                    }
+                    case 3 -> {
+                        System.out.println("""
+                            ===== Select Student By Id =====
+                            """);
+                        System.out.print("[+] Insert Id Student : ");
+                        Integer id = scanner.nextInt();
+                        Student student = studentService.selectStudentById(id);
+                        if (student != null) {
+                            System.out.println("Student Id: " + student.getId());
+                            System.out.println("Student FullName: " + student.getFullName());
+                            System.out.println("Student Gender: " + student.getGender());
+                            System.out.println("Student Score: " + student.getScore());
+                        } else {
+                            System.out.println("Student Not Found!");
+                        }
+                    }
+                    case 4 -> {
+                        System.out.println("""
+                            ===== Update Student By Id =====
+                            """);
+                        System.out.print("[+] Insert Id Student : ");
+                        Integer id = scanner.nextInt();
+                        Student student = studentService.selectStudentById(id);
+                        if (student != null) {
+                            System.out.print("[+] Update FullName Student : ");
+                            String fullName = scanner.next();
+                            System.out.print("[+] Update Gender Student : ");
+                            String gender = scanner.next();
+                            System.out.print("[+] Update Score Student : ");
+                            Double score = scanner.nextDouble();
+
+                            Student updateStudent = Student.builder()
+                                    .fullName(fullName)
+                                    .gender(gender)
+                                    .score(score)
+                                    .build();
+                            studentService.updateStudent(id, updateStudent);
+                            System.out.println("Student Updated Successfully!");
+                        }
+                    }
+                    case 5 -> {
+                        System.out.println("""
                             ===== Delete Student By Id =====
                     """);
-                    System.out.print("[+] Delete Id Student : ");
-                    Integer id = scanner.nextInt();
-                    Student student = studentService.selectStudentById(id);
-                    if (student != null) {
-                        System.out.println("Delete Student failed!");
-                        return;
-                    }
-                    System.out.println("Student Deleted Successfully!");
+                        System.out.print("[+] Delete Id Student : ");
+                        Integer id = scanner.nextInt();
+                        Student student = studentService.selectStudentById(id);
+                        if (student != null) {
+                            System.out.println("Delete Student failed!");
+                            return;
+                        }
+                        studentService.deleteStudent(id);
+                        System.out.println("Student Deleted Successfully!");
 
+                    }
                 }
             }
-        }
+        };
     }
 }
